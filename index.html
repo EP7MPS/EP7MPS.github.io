@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EP7MPS · ایستگاه رادیو آماتوری</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+    <div id="three-background"></div>
+
+    <header>
+        <div class="container header-grid">
+            <div class="logo">
+                <i class="fas fa-satellite-dish"></i>
+                <div>
+                    <span class="logo-call">EP7MPS</span>
+                    <span class="logo-sub">رادیو آماتور</span>
+                </div>
+            </div>
+
+            <nav>
+                <a class="nav-link active" data-page="home"><i class="fas fa-home"></i> خانه</a>
+                <a class="nav-link" data-page="sat"><i class="fas fa-satellite"></i> ماهواره‌ها</a>
+                <a class="nav-link" data-page="about"><i class="fas fa-user"></i> درباره</a>
+            </nav>
+
+            <div class="header-actions">
+                <div class="clock-container">
+                    <div class="clock-item">
+                        <i class="fas fa-globe"></i>
+                        <span id="utcTime">--:--:--</span>
+                        <span class="clock-label">UTC</span>
+                    </div>
+                    <div class="clock-divider">|</div>
+                    <div class="clock-item">
+                        <i class="fas fa-clock"></i>
+                        <span id="irTime">--:--:--</span>
+                        <span class="clock-label">ایران</span>
+                    </div>
+                </div>
+                <button id="themeToggle" class="theme-btn" title="تغییر تم">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-wrapper">
+        <aside class="sidebar-left">
+            <div class="weather-widget">
+                <div class="weather-header">
+                    <i class="fas fa-cloud-sun"></i>
+                    <span>آب و هوای آباده</span>
+                    <span class="weather-badge" id="weatherBadge">فارس</span>
+                </div>
+                <div class="weather-body">
+                    <div class="weather-temp">
+                        <span class="temp-number" id="weatherTemp">--°</span>
+                        <span class="temp-status" id="weatherStatus">در حال دریافت...</span>
+                    </div>
+                    <div class="weather-details">
+                        <div class="weather-detail-item">
+                            <i class="fas fa-wind"></i>
+                            <span id="weatherWindSpeed">--</span>
+                            <span>km/h</span>
+                        </div>
+                        <div class="weather-detail-item">
+                            <i class="fas fa-tint"></i>
+                            <span id="weatherHumidity">--</span>
+                            <span>%</span>
+                        </div>
+                    </div>
+                    <div class="weather-update">
+                        <i class="fas fa-sync-alt"></i>
+                        <span id="weatherUpdateTime">بروزرسانی: ...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="solar-widget">
+                <a href="https://www.hamqsl.com/solar.html" title="مشاهده وضعیت خورشیدی">
+                    <img src="https://www.hamqsl.com/solarn0nbh.php" alt="وضعیت خورشیدی" />
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <section id="page-home" class="page active">
+                <div class="container">
+                    <div class="hero">
+                        <div class="hero-badge">📡 آنلاین</div>
+                        <h1>به ایستگاه رادیو آماتوری</h1>
+                        <h2>EP7MPS</h2>
+                        <p class="hero-desc">تهران، ایران · Grid: LM39</p>
+                        <div class="hero-stats">
+                            <div class="stat"><i class="fas fa-flag"></i> ۴۵ کشور</div>
+                            <div class="stat"><i class="fas fa-microphone"></i> ICOM IC-7300</div>
+                            <div class="stat"><i class="fas fa-antenna"></i> دوقطبی ۴۰/۲۰م</div>
+                        </div>
+                        <div class="hero-buttons">
+                            <a href="#" class="btn-secondary" data-page="about"><i class="fas fa-info-circle"></i> بیشتر بدانید</a>
+                        </div>
+                    </div>
+
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <i class="fas fa-satellite"></i>
+                            <h3>ماهواره‌ها</h3>
+                            <p>تصاویر زنده و اطلاعات ماهواره‌های آماتوری</p>
+                            <a href="#" class="feature-link" data-page="sat">مشاهده <i class="fas fa-arrow-left"></i></a>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-user-astronaut"></i>
+                            <h3>درباره من</h3>
+                            <p>معرفی ایستگاه، تجهیزات و موقعیت QTH</p>
+                            <a href="#" class="feature-link" data-page="about">مشاهده <i class="fas fa-arrow-left"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="page-sat" class="page">
+                <div class="container">
+                    <div class="page-header">
+                        <h2><i class="fas fa-satellite"></i> ماهواره‌های رادیو آماتوری</h2>
+                        <p>تصاویر زنده و اطلاعات ماهواره‌های فعال</p>
+                    </div>
+
+                    <div class="sat-grid">
+                        <div class="sat-card">
+                            <div class="sat-img">
+                                <img src="https://cdn.star.nesdis.noaa.gov/GOES16/ABI/FD/GEOCOLOR/GOES16-FD-GEOCOLOR-1000x1000.jpg" alt="GOES-16" />
+                            </div>
+                            <div class="sat-info">
+                                <h3>GOES-16</h3>
+                                <p><i class="fas fa-clock"></i> بروزرسانی: هر ۱۰ دقیقه</p>
+                                <p><i class="fas fa-globe-americas"></i> منطقه: شرق آمریکا</p>
+                                <span class="badge active">فعال</span>
+                            </div>
+                        </div>
+                        <div class="sat-card">
+                            <div class="sat-img">
+                                <img src="https://www.windy.com/static/meteosat/latest.jpg" alt="Meteosat" />
+                            </div>
+                            <div class="sat-info">
+                                <h3>Meteosat</h3>
+                                <p><i class="fas fa-clock"></i> بروزرسانی: هر ۱۵ دقیقه</p>
+                                <p><i class="fas fa-globe-americas"></i> منطقه: اروپا/آفریقا</p>
+                                <span class="badge active">فعال</span>
+                            </div>
+                        </div>
+                        <div class="sat-card">
+                            <div class="sat-img">
+                                <img src="https://www.nesdis.noaa.gov/sites/default/files/2025-01/NOAA-20_VIIRS_Global_Image_Jan2025_1000.jpg" alt="NOAA-20" />
+                            </div>
+                            <div class="sat-info">
+                                <h3>NOAA-20</h3>
+                                <p><i class="fas fa-clock"></i> بروزرسانی: روزانه</p>
+                                <p><i class="fas fa-globe-americas"></i> منطقه: جهانی</p>
+                                <span class="badge active">فعال</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sat-list">
+                        <h3>ماهواره‌های آماتوری</h3>
+                        <div class="sat-item-grid">
+                            <div class="sat-item">
+                                <h4><i class="fas fa-satellite-dish"></i> AO-91</h4>
+                                <p>آپلینک: 145.960 FM | داونلینک: 435.250 FM</p>
+                                <span class="badge active">فعال</span>
+                            </div>
+                            <div class="sat-item">
+                                <h4><i class="fas fa-satellite-dish"></i> AO-92</h4>
+                                <p>آپلینک: 145.880 FM | داونلینک: 435.350 FM</p>
+                                <span class="badge active">فعال</span>
+                            </div>
+                            <div class="sat-item">
+                                <h4><i class="fas fa-satellite-dish"></i> SO-50</h4>
+                                <p>آپلینک: 145.850 FM | داونلینک: 436.800 FM</p>
+                                <span class="badge active">فعال</span>
+                            </div>
+                            <div class="sat-item">
+                                <h4><i class="fas fa-satellite-dish"></i> ISS</h4>
+                                <p>داونلینک: 145.800 FM | APRS: 145.825</p>
+                                <span class="badge active">فعال</span>
+                            </div>
+                            <div class="sat-item">
+                                <h4><i class="fas fa-satellite-dish"></i> RS-44</h4>
+                                <p>آپلینک: 435.610 CW | داونلینک: 145.950 CW</p>
+                                <span class="badge inactive">غیرفعال</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="page-about" class="page">
+                <div class="container">
+                    <div class="page-header">
+                        <h2><i class="fas fa-user"></i> درباره من</h2>
+                        <p>معرفی ایستگاه رادیو آماتوری EP7MPS</p>
+                    </div>
+
+                    <div class="about-grid">
+                        <div class="about-card">
+                            <div class="about-avatar">
+                                <i class="fas fa-user-astronaut"></i>
+                            </div>
+                            <h3>EP7MPS</h3>
+                            <p><i class="fas fa-map-marker-alt"></i> QTH: تهران، ایران</p>
+                            <p><i class="fas fa-globe"></i> Grid Locator: LM39</p>
+                            <p><i class="fas fa-calendar-alt"></i> تاریخ اخذ مدرک: ۱۳۹۸</p>
+                            <p><i class="fas fa-microphone"></i> تجهیزات: ICOM IC-7300</p>
+                            <p><i class="fas fa-antenna"></i> آنتن: دوقطبی ۴۰/۲۰ متر</p>
+                            <hr />
+                            <h4>علایق</h4>
+                            <ul>
+                                <li><i class="fas fa-flag"></i> DXing و ارتباطات دوربرد</li>
+                                <li><i class="fas fa-satellite"></i> ردیابی ماهواره‌ها</li>
+                                <li><i class="fas fa-code"></i> CW (مورس)</li>
+                                <li><i class="fas fa-cloud-sun"></i> هواشناسی فضایی</li>
+                            </ul>
+                        </div>
+                        <div class="map-card">
+                            <h3><i class="fas fa-map"></i> موقعیت QTH</h3>
+                            <div id="qthMap"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <h4><i class="fas fa-satellite-dish"></i> EP7MPS</h4>
+                    <p>ایستگاه رادیو آماتوری در تهران، ایران. فعال در باندهای HF و VHF.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>لینک‌های مفید</h4>
+                    <ul>
+                        <li><a href="#">ARRL</a></li>
+                        <li><a href="#">QRZ</a></li>
+                        <li><a href="#">DXZone</a></li>
+                        <li><a href="#">HamRadio</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>دسترسی سریع</h4>
+                    <ul>
+                        <li><a href="#" data-page="home">خانه</a></li>
+                        <li><a href="#" data-page="sat">ماهواره‌ها</a></li>
+                        <li><a href="#" data-page="about">درباره</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>ارتباط</h4>
+                    <p><i class="fas fa-envelope"></i> ep7mps@radio.ir</p>
+                    <p><i class="fas fa-phone"></i> +98 912 000 0000</p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>
+                    © ۲۰۲۶ EP7MPS · تمامی حقوق محفوظ است · ۷۳
+                    <span class="footer-dates">
+                        <span id="persianDate"></span> · <span id="gregorianDate"></span>
+                    </span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="three-background.js"></script>
+</body>
+</html>
